@@ -129,8 +129,10 @@ class FloatingWindowService : Service() {
         currentAlpha = savedAlpha
         
         // 确定初始尺寸
-        val initialWidth = if (savedSize.first > 0) savedSize.first else displayWidth
-        val initialHeight = if (savedSize.second > 0) savedSize.second else (displayWidth * 0.25).toInt()
+        // 默认宽度3400（用户指定），如果没有保存的设置则使用默认值
+        val defaultWidth = 3400
+        val initialWidth = if (savedSize.first > 0) savedSize.first else defaultWidth
+        val initialHeight = if (savedSize.second > 0) savedSize.second else (defaultWidth * 0.25).toInt()
         currentWidth = initialWidth
         currentHeight = initialHeight
 
