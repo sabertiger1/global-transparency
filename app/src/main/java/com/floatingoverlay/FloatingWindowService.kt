@@ -269,8 +269,8 @@ class FloatingWindowService : Service() {
     // 调整尺寸的方法
     private fun increaseWidth() {
         layoutParams?.let { params ->
-            val displayMetrics = resources.displayMetrics
-            val maxWidth = displayMetrics.widthPixels
+            // 移除屏幕尺寸限制，允许调整到更大的尺寸（最大10000px）
+            val maxWidth = 10000
             currentWidth = (currentWidth + SIZE_STEP).coerceAtMost(maxWidth)
             params.width = currentWidth
             updateWindowSize()
@@ -291,8 +291,8 @@ class FloatingWindowService : Service() {
     
     private fun increaseHeight() {
         layoutParams?.let { params ->
-            val displayMetrics = resources.displayMetrics
-            val maxHeight = displayMetrics.heightPixels
+            // 移除屏幕尺寸限制，允许调整到更大的尺寸（最大5000px）
+            val maxHeight = 5000
             currentHeight = (currentHeight + SIZE_STEP).coerceAtMost(maxHeight)
             params.height = currentHeight
             updateWindowSize()
