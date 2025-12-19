@@ -1,15 +1,15 @@
-name: Android Build
+name: Android Build (Fallback - No Cache)
+
+# 备用工作流：当缓存服务不可用时使用
+# 使用方法：在 GitHub Actions 页面手动触发此工作流
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
     - name: Checkout code
@@ -20,14 +20,13 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-        # 暂时禁用缓存，避免缓存服务故障导致编译失败
-        # cache: 'gradle'
+        # 完全禁用缓存
+        cache: 'none'
     
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
       with:
         gradle-version: 8.2
-        # 禁用缓存，直接下载依赖
         cache-read-only: false
     
     - name: Generate Gradle Wrapper (if needed)
@@ -38,11 +37,10 @@ jobs:
         fi
         chmod +x gradlew
         
-    - name: Build with Gradle (no cache)
-      run: ./gradlew assembleDebug --no-daemon --no-build-cache
+    - name: Build with Gradle (no cache, no daemon)
+      run: ./gradlew assembleDebug --no-daemon --no-build-cache --offline=false
       env:
-        # 设置 Gradle 选项，避免使用缓存
-        GRADLE_OPTS: "-Dorg.gradle.caching=false"
+        GRADLE_OPTS: "-Dorg.gradle.caching=false -Dorg.gradle.daemon=false"
       
     - name: Upload APK
       uses: actions/upload-artifact@v4

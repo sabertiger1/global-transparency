@@ -11,12 +11,8 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+// 注意：仓库配置已移至 settings.gradle，这里不再需要 allprojects 块
+// 这样可以避免与 settings.gradle 中的 repositoriesMode 冲突
 
 task clean(type: Delete) {
     delete rootProject.buildDir
