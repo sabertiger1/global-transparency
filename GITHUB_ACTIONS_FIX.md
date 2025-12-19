@@ -26,6 +26,14 @@ but repository 'Google' was added by build file 'build.gradle'
 ```
 **原因**：`settings.gradle` 中设置了 `FAIL_ON_PROJECT_REPOS`，但根目录 `build.gradle` 中的 `allprojects` 块也定义了仓库，导致冲突
 
+### 问题4：缺少应用图标资源
+错误信息：
+```
+ERROR: resource mipmap/ic_launcher (aka com.floatingoverlay:mipmap/ic_launcher) not found.
+ERROR: resource mipmap/ic_launcher_round (aka com.floatingoverlay:mipmap/ic_launcher_round) not found.
+```
+**原因**：AndroidManifest.xml 中引用了不存在的图标资源文件
+
 ## 已修复的内容
 
 ### 1. 创建了 Gradle Wrapper 脚本
@@ -37,18 +45,22 @@ but repository 'Google' was added by build file 'build.gradle'
 - ✅ 将 `settings.gradle` 中的 `FAIL_ON_PROJECT_REPOS` 改为 `PREFER_SETTINGS`
 - ✅ 所有仓库配置统一在 `settings.gradle` 中管理
 
-### 3. 更新了 GitHub Actions 工作流
+### 3. 修复了缺少应用图标的问题
+- ✅ 修改 `AndroidManifest.xml` 使用系统默认图标 `@android:drawable/ic_dialog_info`
+- ✅ 添加 `android.suppressUnsupportedCompileSdk=35` 到 `gradle.properties` 以消除警告
+
+### 4. 更新了 GitHub Actions 工作流
 工作流现在会：
 - 自动检测是否存在 `gradle-wrapper.jar`
 - 如果不存在，自动生成 Gradle Wrapper
 - **禁用缓存**：避免缓存服务故障导致编译失败
 - 使用 `--no-build-cache` 标志，不依赖缓存服务
 
-### 4. 创建了备用工作流
+### 5. 创建了备用工作流
 - ✅ `.github/workflows/android-build-fallback.yml` - 完全无缓存的备用方案
 - 当主工作流失败时，可以手动触发此工作流
 
-### 5. 更新了 .gitignore
+### 6. 更新了 .gitignore
 确保 Gradle Wrapper 文件会被提交到仓库：
 ```
 !gradlew
@@ -61,8 +73,8 @@ but repository 'Google' was added by build file 'build.gradle'
 
 1. **提交修复到 Git**
    ```bash
-   git add build.gradle settings.gradle gradlew gradlew.bat .gitignore .gitattributes .github/workflows/
-   git commit -m "Fix: Resolve Gradle repository conflict and add wrapper files"
+   git add build.gradle settings.gradle gradle.properties app/src/main/AndroidManifest.xml gradlew gradlew.bat .gitignore .gitattributes .github/workflows/
+   git commit -m "Fix: Resolve all build issues - repository conflict, missing icons, and wrapper files"
    git push
    ```
 
